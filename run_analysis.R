@@ -1,4 +1,4 @@
-
+library("dplyr")
 # read data from txt file in working directory
 train_data <- read.table(".\\train\\X_train.txt")
 test_data <- read.table(".\\test\\X_test.txt")
@@ -20,30 +20,30 @@ mean_std_vect <- as.logical(mean_vect + std_vect)
 
 reduced_data_set <- cmpl_data_set[,mean_std_vect]
 
-
+#read the activity related to the measures from y_train.txt and y_test.txt
 train_act <- read.table(".\\train\\y_train.txt")
 test_act <- read.table(".\\test\\y_test.txt")
 activity_set <- rbind(train_act, test_act)
 activity_set <- as.numeric(activity_set[,1])
 
-label_name <- read.table("activity_labels.txt")
+label_name <- read.table("activity_labels.txt")			#read the label name from activity_labels.txt
 label_name <- as.character(label_name[,2])
 
 
 reduced_data_set$Activity <- activity_set
 
-
+#read the subject who performed the activity from subject_train.txt and subject_test.txt
 sub_set_train <- read.table(".\\train\\subject_train.txt")
 sub_set_test <- read.table(".\\test\\subject_test.txt")
 sub_set <- rbind(sub_set_train, sub_set_test)
 sub_set <- as.numeric(sub_set[,1])
 
 reduced_data_set$Subject <- sub_set
-
+# create a tidy data set
 tidy_set <- aggregate(reduced_data_set[,1:79], by=list(Subject=reduced_data_set$Subject, Activity=reduced_data_set$Activity), FUN = mean)
 
 #tidy_set <- tidy_set[c(2,1,3:81)]
-
+# Replace numeric value of activity with the corresponding character value 
 tidy_set$Activity <- replace(tidy_set$Activity, tidy_set$Activity==1 , label_name[1])
 tidy_set$Activity <- replace(tidy_set$Activity, tidy_set$Activity==2 , label_name[2])
 tidy_set$Activity <- replace(tidy_set$Activity, tidy_set$Activity==3 , label_name[3])
@@ -51,5 +51,5 @@ tidy_set$Activity <- replace(tidy_set$Activity, tidy_set$Activity==4 , label_nam
 tidy_set$Activity <- replace(tidy_set$Activity, tidy_set$Activity==5 , label_name[5])
 tidy_set$Activity <- replace(tidy_set$Activity, tidy_set$Activity==6 , label_name[6])
 
-
+# print the tidy data set
 print(tidy_set)
